@@ -1,0 +1,94 @@
+<div class="whiteboard-container" (window:resize)="onWindowResize()">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-section">
+      <button
+        class="mode-btn"
+        [class.active]="mode() === 'draw'"
+        (click)="setMode('draw')"
+        title="Draw mode"
+      >
+        ✏️ Draw
+      </button>
+      <button
+        class="mode-btn"
+        [class.active]="mode() === 'pan'"
+        (click)="setMode('pan')"
+        title="Pan mode"
+      >
+        ✋ Pan
+      </button>
+      <button
+        class="mode-btn"
+        [class.active]="mode() === 'erase'"
+        (click)="setMode('erase')"
+        title="Erase mode"
+      >
+        🗑️ Erase
+      </button>
+    </div>
+
+    <div class="toolbar-section">
+      <label class="color-picker-label">
+        Color:
+        <input
+          type="color"
+          [value]="currentColor()"
+          (input)="currentColor.set($any($event.target).value)"
+          class="color-picker"
+        />
+      </label>
+
+      <label class="slider-label">
+        Width: {{ strokeWidth() }}px
+        <input
+          type="range"
+          min="1"
+          max="20"
+          [value]="strokeWidth()"
+          (input)="strokeWidth.set(+$any($event.target).value)"
+          class="width-slider"
+        />
+      </label>
+    </div>
+
+    <div class="toolbar-section">
+      <button class="action-btn" (click)="openSVG()" title="Open SVG file">
+        📂 Open
+      </button>
+      <button class="action-btn" (click)="saveSVG()" title="Save as SVG">
+        💾 Save
+      </button>
+      <button class="action-btn danger" (click)="clearCanvas()" title="Clear canvas">
+        🗑️ Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- SVG Canvas -->
+  <svg
+    #svgCanvas
+    class="svg-canvas"
+    [attr.viewBox]="viewBoxString()"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp()"
+    (pointerleave)="onPointerUp()"
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)"
+    (touchcancel)="onTouchEnd($event)"
+    (wheel)="onWheel($event)"
+  >
+    @for (path of paths(); track $index) {
+      <path
+        [attr.d]="path.d"
+        [attr.stroke]="path.color"
+        [attr.stroke-width]="path.width"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    }
+  </svg>
+</div>

@@ -1,0 +1,149 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.whiteboard-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 0.25rem;
+  }
+}
+
+.mode-btn,
+.action-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #f5f5f5;
+    border-color: #b0b0b0;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+.mode-btn.active {
+  background: #2196f3;
+  color: white;
+  border-color: #1976d2;
+
+  &:hover {
+    background: #1976d2;
+  }
+}
+
+.action-btn.danger {
+  color: #d32f2f;
+
+  &:hover {
+    background: #ffebee;
+    border-color: #d32f2f;
+  }
+}
+
+.color-picker-label,
+.slider-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333;
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+    gap: 0.25rem;
+  }
+}
+
+.color-picker {
+  width: 40px;
+  height: 32px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 32px;
+    height: 28px;
+  }
+}
+
+.width-slider {
+  width: 100px;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 80px;
+  }
+}
+
+.svg-canvas {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  background: white;
+}
+
+.whiteboard-container[data-mode='pan'] .svg-canvas {
+  cursor: grab;
+}
+
+.whiteboard-container[data-mode='pan'] .svg-canvas:active {
+  cursor: grabbing;
+}
+
+.whiteboard-container[data-mode='erase'] .svg-canvas {
+  cursor: pointer;
+}
