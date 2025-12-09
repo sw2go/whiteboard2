@@ -1,0 +1,157 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.whiteboard-container {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 100%;
+  height: 100vh;
+  background: #f7f7f7;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  user-select: none;
+  flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    gap: 8px;
+  }
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media (max-width: 640px) {
+    gap: 8px;
+  }
+}
+
+.mode-group {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.mode-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.width-value {
+  min-width: 32px;
+}
+
+.color-picker {
+  width: 40px;
+  height: 28px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.width-slider {
+  width: 80px;
+  cursor: pointer;
+}
+
+.file-btn,
+.action-btn {
+  padding: 6px 10px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+}
+
+.file-btn {
+  display: inline-block;
+}
+
+.action-btn.danger {
+  color: #d32f2f;
+
+  &:hover {
+    background: #ffebee;
+    border-color: #d32f2f;
+  }
+}
+
+.status {
+  margin-left: auto;
+  color: #666;
+  font-size: 12px;
+
+  @media (max-width: 640px) {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
+
+.board-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+}
+
+.svg-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  background: #fff;
+}
+
+.hit-area {
+  fill: white;
+}
+
+// Cursor styles based on mode
+.whiteboard-container[data-mode='pan'] .svg-canvas {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.whiteboard-container[data-mode='erase'] .svg-canvas {
+  cursor: crosshair;
+}
+
+.whiteboard-container[data-mode='draw'] .svg-canvas {
+  cursor: crosshair;
+}
