@@ -176,7 +176,7 @@ export class Whiteboard3Component {
     // Two-finger gesture on touch (pan + pinch zoom)
     if (this.pointers.size === 2) {
       if (this.mode() !== 'erase') {
-        this.endDraw();
+        this.cancelDraw(); // Cancel without saving the dot from first finger
         this.isPanning = false;
         this.startPinch();
         return;
@@ -325,6 +325,17 @@ export class Whiteboard3Component {
       this.paths.update((paths) => [...paths, newPath]);
     }
 
+    this.isDrawing = false;
+    this.activePath = null;
+    this.activePathColor = '';
+    this.activePathWidth = 0;
+  }
+
+  private cancelDraw(): void {
+    // Remove the path from DOM without saving (used when switching to pinch/pan)
+    if (this.activePath) {
+      this.activePath.remove();
+    }
     this.isDrawing = false;
     this.activePath = null;
     this.activePathColor = '';
