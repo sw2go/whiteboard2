@@ -5,12 +5,11 @@ import {
   computed,
   ElementRef,
   viewChild,
-  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-type DrawMode = 'draw' | 'pan' | 'erase';
+type DrawMode = 'draw' | 'erase';
 
 interface Point {
   x: number;
@@ -31,7 +30,6 @@ interface Path {
   styleUrl: './whiteboard3.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '(window:resize)': 'onWindowResize()',
     '(window:keydown)': 'onKeyDown($event)',
     '(window:keyup)': 'onKeyUp($event)',
   },
@@ -92,18 +90,13 @@ export class Whiteboard3Component {
   });
 
   cursor = computed(() => {
-    const m = this.mode();
-    if (m === 'pan' || this.spacePressed) return this.isPanning ? 'grabbing' : 'grab';
+    if (this.spacePressed || this.isPanning) return this.isPanning ? 'grabbing' : 'grab';
     return 'crosshair';
   });
 
   private nextId = 0;
   private generateId(): string {
     return `path-${Date.now()}-${this.nextId++}`;
-  }
-
-  onWindowResize(): void {
-    // Transform-based approach doesn't need resize handling
   }
 
   onKeyDown(event: KeyboardEvent): void {
@@ -163,8 +156,6 @@ export class Whiteboard3Component {
     if (event.button === 1) return true;
     // Space + left click
     if (this.spacePressed && event.button === 0) return true;
-    // Pan mode with left click
-    if (this.mode() === 'pan' && event.button === 0) return true;
     return false;
   }
 
@@ -448,17 +439,6 @@ export class Whiteboard3Component {
     }
 
     this.erasePrevScreen = curr;
-  }
-
-  private eraseAtPoint(x: number, y: number): void {
-    const el = document.elementFromPoint(x, y);
-    if (!el) return;
-
-    const id = el.getAttribute?.('data-id');
-    if (id && el.closest?.('#contentGroup')) {
-      this.paths.update((paths) => paths.filter((p) => p.id !== id));
-      el.remove();
-    }
   }
 
   private endErase(): void {
