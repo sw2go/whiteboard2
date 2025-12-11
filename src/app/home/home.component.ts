@@ -18,6 +18,11 @@ import { RouterLink } from '@angular/router';
           <span class="label">Whiteboard 2 (Improved)</span>
           <span class="description">Transform-based with all improvements</span>
         </a>
+        <a routerLink="/whiteboard3" class="nav-link">
+          <span class="icon">3</span>
+          <span class="label">Whiteboard 3</span>
+          <span class="description">Experimental whiteboard</span>
+        </a>
       </nav>
     </div>
   `,

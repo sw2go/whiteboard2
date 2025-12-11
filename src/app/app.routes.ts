@@ -15,4 +15,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./whiteboard2/whiteboard2.component').then((m) => m.Whiteboard2Component),
   },
+  {
+    path: 'whiteboard3',
+    loadComponent: () =>
+      import('./whiteboard3/whiteboard3.component').then((m) => m.Whiteboard3Component),
+  },
 ];
