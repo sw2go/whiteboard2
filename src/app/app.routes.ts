@@ -7,17 +7,14 @@ export const routes: Routes = [
   },
   {
     path: 'whiteboard',
-    loadComponent: () =>
-      import('./whiteboard/whiteboard.component').then((m) => m.WhiteboardComponent),
+    loadComponent: () => import('./page1/page1.component').then((m) => m.Page1Component),
   },
   {
     path: 'whiteboard2',
-    loadComponent: () =>
-      import('./whiteboard2/whiteboard2.component').then((m) => m.Whiteboard2Component),
+    loadComponent: () => import('./page2/page2.component').then((m) => m.Page2Component),
   },
   {
     path: 'whiteboard3',
-    loadComponent: () =>
-      import('./whiteboard3/whiteboard3.component').then((m) => m.Whiteboard3Component),
+    loadComponent: () => import('./page3/page3.component').then((m) => m.Page3Component),
   },
 ];
