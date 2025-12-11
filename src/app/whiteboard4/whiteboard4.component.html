@@ -1,0 +1,23 @@
+<div class="whiteboard-container">
+  <svg
+    #svgCanvas
+    class="svg-canvas"
+    [style.cursor]="cursor()"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerCancel($event)"
+    (pointerleave)="onPointerUp($event)"
+    (wheel)="onWheel($event)"
+    (auxclick)="$event.preventDefault()"
+  >
+    <!-- Hit area outside transform to always capture events -->
+    <rect class="hit-area" x="0" y="0" width="100%" height="100%" fill="white"></rect>
+
+    <!-- Content group with transform -->
+    <g #contentGroup id="contentGroup" [attr.transform]="transform()">
+      <!-- Paths rendered from signal (for persistence/save) are duplicates of DOM paths -->
+      <!-- DOM paths are created directly for performance during drawing -->
+    </g>
+  </svg>
+</div>
