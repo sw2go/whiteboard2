@@ -74,6 +74,7 @@ export class Whiteboard3Component {
   private pinchAnchorWorld: Point | null = null;
 
   // Eraser state
+  private isErasing = false;
   private erasePrevScreen: Point | null = null;
 
   // Space key state for PC panning
@@ -173,18 +174,18 @@ export class Whiteboard3Component {
     svg.setPointerCapture(event.pointerId);
     this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
-    // Two-finger gesture on touch (pan + pinch zoom)
+    // Two-finger gesture on touch (pan + pinch zoom) - works in all modes
     if (this.pointers.size === 2) {
-      if (this.mode() !== 'erase') {
-        this.cancelDraw(); // Cancel without saving the dot from first finger
-        this.isPanning = false;
-        this.startPinch();
-        return;
-      }
+      this.cancelDraw(); // Cancel without saving the dot from first finger
+      this.endErase(); // Stop erasing
+      this.isPanning = false;
+      this.startPinch();
+      return;
     }
 
     // Check for pan triggers (middle mouse, space+click, pan mode)
     if (this.shouldPan(event)) {
+      this.endErase(); // Stop erasing if panning
       this.startPan(event);
       return;
     }
@@ -408,11 +409,14 @@ export class Whiteboard3Component {
 
   // Eraser using elementFromPoint
   private startErase(event: PointerEvent): void {
+    this.isErasing = true;
     this.erasePrevScreen = { x: event.clientX, y: event.clientY };
-    this.eraseAtPoint(event.clientX, event.clientY);
+    // Don't erase immediately - wait for move to confirm it's not a pinch gesture
   }
 
   private continueErase(event: PointerEvent): void {
+    if (!this.isErasing) return;
+
     const curr = { x: event.clientX, y: event.clientY };
 
     if (!this.erasePrevScreen) {
@@ -458,6 +462,7 @@ export class Whiteboard3Component {
   }
 
   private endErase(): void {
+    this.isErasing = false;
     this.erasePrevScreen = null;
   }
 
