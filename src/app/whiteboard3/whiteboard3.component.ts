@@ -32,6 +32,8 @@ interface Path {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:resize)': 'onWindowResize()',
+    '(window:keydown)': 'onKeyDown($event)',
+    '(window:keyup)': 'onKeyUp($event)',
   },
 })
 export class Whiteboard3Component {
@@ -74,6 +76,9 @@ export class Whiteboard3Component {
   // Eraser state
   private erasePrevScreen: Point | null = null;
 
+  // Space key state for PC panning
+  private spacePressed = false;
+
   // Computed signals
   transform = computed(() => `translate(${this.tx()},${this.ty()}) scale(${this.scale()})`);
 
@@ -87,7 +92,7 @@ export class Whiteboard3Component {
 
   cursor = computed(() => {
     const m = this.mode();
-    if (m === 'pan') return this.isPanning ? 'grabbing' : 'grab';
+    if (m === 'pan' || this.spacePressed) return this.isPanning ? 'grabbing' : 'grab';
     return 'crosshair';
   });
 
@@ -98,6 +103,20 @@ export class Whiteboard3Component {
 
   onWindowResize(): void {
     // Transform-based approach doesn't need resize handling
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.code === 'Space' && !event.repeat) {
+      this.spacePressed = true;
+      // Prevent page scrolling
+      event.preventDefault();
+    }
+  }
+
+  onKeyUp(event: KeyboardEvent): void {
+    if (event.code === 'Space') {
+      this.spacePressed = false;
+    }
   }
 
   // Coordinate conversions
@@ -137,12 +156,24 @@ export class Whiteboard3Component {
     return Math.min(this.MAX_SCALE, Math.max(this.MIN_SCALE, s));
   }
 
+  // Check if this event should trigger panning
+  private shouldPan(event: PointerEvent): boolean {
+    // Middle mouse button (button 1)
+    if (event.button === 1) return true;
+    // Space + left click
+    if (this.spacePressed && event.button === 0) return true;
+    // Pan mode with left click
+    if (this.mode() === 'pan' && event.button === 0) return true;
+    return false;
+  }
+
   // Pointer events
   onPointerDown(event: PointerEvent): void {
     const svg = this.svgElement().nativeElement;
     svg.setPointerCapture(event.pointerId);
     this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
+    // Two-finger gesture on touch (pan + pinch zoom)
     if (this.pointers.size === 2) {
       if (this.mode() !== 'erase') {
         this.endDraw();
@@ -152,10 +183,14 @@ export class Whiteboard3Component {
       }
     }
 
+    // Check for pan triggers (middle mouse, space+click, pan mode)
+    if (this.shouldPan(event)) {
+      this.startPan(event);
+      return;
+    }
+
     if (this.mode() === 'draw') {
       this.startDraw(event);
-    } else if (this.mode() === 'pan') {
-      this.startPan(event);
     } else if (this.mode() === 'erase') {
       this.startErase(event);
     }
@@ -171,10 +206,14 @@ export class Whiteboard3Component {
       return;
     }
 
+    // Handle panning (from middle mouse, space+drag, or pan mode)
+    if (this.isPanning) {
+      this.continuePan(event);
+      return;
+    }
+
     if (this.mode() === 'draw') {
       this.continueDraw(event);
-    } else if (this.mode() === 'pan') {
-      this.continuePan(event);
     } else if (this.mode() === 'erase') {
       this.continueErase(event);
     }
@@ -191,10 +230,13 @@ export class Whiteboard3Component {
       this.endPinch();
     }
 
+    // Always try to end pan (handles middle mouse, space+drag, pan mode)
+    if (this.isPanning) {
+      this.endPan(event);
+    }
+
     if (this.mode() === 'draw') {
       this.endDraw();
-    } else if (this.mode() === 'pan') {
-      this.endPan(event);
     } else if (this.mode() === 'erase') {
       this.endErase();
     }
